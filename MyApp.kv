@@ -1,0 +1,27 @@
+<MyWidget>:
+    orientation: 'vertical'
+    BoxLayout:
+        orientation: 'horizontal'
+        Label:
+            text: 'Customer Name:'
+        TextInput:
+            id: customer_name
+            multiline: False
+        Label:
+            text: 'Service Date (YYYY-MM-DD):'
+        TextInput:
+            id: service_date
+            multiline: False
+    Button:
+        text: 'Add Customer'
+        on_press: root.add_customer()
+    ScrollView:
+        BoxLayout:
+            id: customer_list
+            orientation: 'vertical'
+            size_hint_y: None
+            height: self.minimum_height
+
+<Customer>:
+    customer_name: customer_name
+    service_date: service_date
