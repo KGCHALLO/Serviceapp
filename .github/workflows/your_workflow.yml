@@ -26,10 +26,6 @@ jobs:
       with:
         python-version: 3.9
 
-    - name: Remove extra headers
-      run: |
-        git config --global --unset-all http.https://github.com/.extraheader
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -39,3 +35,4 @@ jobs:
     - name: Build APK
       run: |
         buildozer -v android debug
+
