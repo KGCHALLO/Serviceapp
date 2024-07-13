@@ -41,19 +41,18 @@ jobs:
     - name: Install Android SDK
       run: |
         sudo apt-get update
-        sudo apt-get install -y openjdk-11-jdk
+        sudo apt-get install -y openjdk-11-jdk unzip
         sudo mkdir -p /opt/android-sdk/cmdline-tools
-        sudo wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip -O android_cmdline_tools.zip
-        sudo unzip android_cmdline_tools.zip -d /opt/android-sdk/cmdline-tools
+        sudo wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O commandlinetools.zip
+        sudo unzip commandlinetools.zip -d /opt/android-sdk/cmdline-tools
         sudo mv /opt/android-sdk/cmdline-tools/cmdline-tools /opt/android-sdk/cmdline-tools/tools
-        sudo rm android_cmdline_tools.zip
         export ANDROID_SDK_ROOT=/opt/android-sdk
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
         yes | sdkmanager --licenses
-        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "sources;android-30"
 
     - name: Build APK
       run: |
         export ANDROID_SDK_ROOT=/opt/android-sdk
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/platform-tools
+        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/30.0.3
         buildozer -v android debug
