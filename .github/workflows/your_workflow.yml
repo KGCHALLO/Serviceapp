@@ -57,6 +57,12 @@ jobs:
         export ANDROID_HOME=$ANDROID_SDK_ROOT
         export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/21.1.6352462
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/30.0.3:$ANDROID_NDK_HOME
+        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+        echo "ANDROID_HOME=$ANDROID_HOME"
+        echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
+        echo "PATH=$PATH"
+        ls -la $ANDROID_SDK_ROOT
+        ls -la $ANDROID_NDK_HOME
         which aidl
         aidl --version
 
