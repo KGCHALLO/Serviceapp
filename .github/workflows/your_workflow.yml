@@ -49,11 +49,11 @@ jobs:
         export ANDROID_SDK_ROOT=/opt/android-sdk
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
         yes | sdkmanager --licenses
-        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "sources;android-30"
+        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "sources;android-30" "ndk;21.1.6352462" "extras;google;market_apk_expansion" "extras;google;market_licensing"
 
     - name: Build APK
       run: |
         export ANDROID_SDK_ROOT=/opt/android-sdk
-        export ANDROID_HOME=/opt/android-sdk
+        export ANDROID_NDK=/opt/android-sdk/ndk/21.1.6352462
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/30.0.3
         buildozer -v android debug
