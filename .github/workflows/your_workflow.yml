@@ -49,11 +49,21 @@ jobs:
         export ANDROID_SDK_ROOT=/opt/android-sdk
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
         yes | sdkmanager --licenses
-        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "sources;android-30" "ndk;21.1.6352462" "extras;google;market_apk_expansion" "extras;google;market_licensing"
+        sdkmanager --install "platform-tools" "platforms;android-30" "build-tools;30.0.3" "sources;android-30" "ndk;21.1.6352462" "extras;google;market_apk_expansion" "extras;google;market_licensing" "cmdline-tools;latest" "platforms;android-31" "build-tools;31.0.0"
+
+    - name: Verify Aidl Installation
+      run: |
+        export ANDROID_SDK_ROOT=/opt/android-sdk
+        export ANDROID_HOME=$ANDROID_SDK_ROOT
+        export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/21.1.6352462
+        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/30.0.3:$ANDROID_NDK_HOME
+        which aidl
+        aidl --version
 
     - name: Build APK
       run: |
         export ANDROID_SDK_ROOT=/opt/android-sdk
-        export ANDROID_NDK=/opt/android-sdk/ndk/21.1.6352462
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/30.0.3
+        export ANDROID_HOME=$ANDROID_SDK_ROOT
+        export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/21.1.6352462
+        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/30.0.3:$ANDROID_NDK_HOME
         buildozer -v android debug
