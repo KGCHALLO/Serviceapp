@@ -64,7 +64,7 @@ jobs:
         ls -la $ANDROID_SDK_ROOT
         ls -la $ANDROID_NDK_HOME
         which aidl
-        aidl --version
+        aidl --version || echo "aidl not found"
 
     - name: Build APK
       run: |
