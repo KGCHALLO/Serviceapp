@@ -46,11 +46,13 @@ jobs:
       - name: Ensure gradlew is executable
         run: chmod +x ./gradlew
 
-      - name: Build APK
-        run: ./gradlew assembleRelease
+      - name: Build APK with Buildozer
+        run: |
+          pip install buildozer
+          buildozer android debug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
-          name: app-release
-          path: app/build/outputs/apk/release/app-release.apk
+          name: app-debug
+          path: bin/*.apk
