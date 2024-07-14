@@ -22,12 +22,22 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
-      - name: Set up Android SDK
-        uses: reactivecircus/android-setup-action@v2
-        with:
-          sdk-platform-tools: '31.0.3'  # Replace with your desired platform tools version
-          sdk-build-tools: '31.0.0'     # Replace with your desired build tools version
-          sdk-platform: 'android-31'     # Replace with your desired SDK platform version
+      - name: Install Android SDK
+        run: |
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O android-sdk-tools.zip
+          unzip -qq android-sdk-tools.zip -d $HOME/android-sdk
+
+      - name: Setup environment
+        run: |
+          export ANDROID_SDK_ROOT=$HOME/android-sdk
+          export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
+
+      - name: Accept Android licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Install SDK components
+        run: |
+          sdkmanager "platform-tools" "build-tools;31.0.0" "platforms;android-31"
 
       - name: Build APK
         run: |
