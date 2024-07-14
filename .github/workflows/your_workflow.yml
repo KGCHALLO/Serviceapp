@@ -44,15 +44,13 @@ jobs:
           sdkmanager "platform-tools" "build-tools;31.0.0" "platforms;android-31"
 
       - name: Ensure gradlew is executable
-        run: chmod +x gradlew
-        working-directory: ./path-to-your-gradlew
+        run: chmod +x ./gradlew
 
       - name: Build APK
         run: ./gradlew assembleRelease
-        working-directory: ./path-to-your-gradlew
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
           name: app-release
-          path: ./path-to-your-gradlew/app/build/outputs/apk/release/app-release.apk
+          path: app/build/outputs/apk/release/app-release.apk
