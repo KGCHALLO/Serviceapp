@@ -1,7 +1,10 @@
-name: Build APK
+name: Build and Deploy APK
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -10,66 +13,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Cache pip
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
+      - name: Set up Android SDK
+        uses: reactivecircus/android-setup-action@v2
+        with:
+          sdk-platform-tools: '31.0.3'  # Replace with your desired platform tools version
+          sdk-build-tools: '31.0.0'     # Replace with your desired build tools version
+          sdk-platform: 'android-31'     # Replace with your desired SDK platform version
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install buildozer
-        pip install cython==0.29.24
+      - name: Build APK
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleRelease
 
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '11'
-
-    - name: Install Android SDK
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y openjdk-11-jdk unzip
-        sudo mkdir -p /opt/android-sdk/cmdline-tools
-        sudo wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O commandlinetools.zip
-        sudo unzip commandlinetools.zip -d /opt/android-sdk/cmdline-tools
-        sudo mv /opt/android-sdk/cmdline-tools/cmdline-tools /opt/android-sdk/cmdline-tools/tools
-        export ANDROID_SDK_ROOT=/opt/android-sdk
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin
-        yes | sdkmanager --licenses
-        sdkmanager --install "platform-tools" "platforms;android-30" "build-tools;30.0.3" "sources;android-30" "ndk;21.1.6352462" "extras;google;market_apk_expansion" "extras;google;market_licensing" "cmdline-tools;latest" "platforms;android-31" "build-tools;31.0.0"
-
-    - name: Verify Aidl Installation
-      run: |
-        export ANDROID_SDK_ROOT=/opt/android-sdk
-        export ANDROID_HOME=$ANDROID_SDK_ROOT
-        export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/21.1.6352462
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/30.0.3:$ANDROID_NDK_HOME
-        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-        echo "ANDROID_HOME=$ANDROID_HOME"
-        echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
-        echo "PATH=$PATH"
-        ls -la $ANDROID_SDK_ROOT
-        ls -la $ANDROID_NDK_HOME
-        which aidl
-        aidl --version || echo "aidl not found"
-
-    - name: Build APK
-      run: |
-        export ANDROID_SDK_ROOT=/opt/android-sdk
-        export ANDROID_HOME=$ANDROID_SDK_ROOT
-        export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/21.1.6352462
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/30.0.3:$ANDROID_NDK_HOME
-        buildozer -v android debug
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release
+          path: app/build/outputs/apk/release/app-release.apk
